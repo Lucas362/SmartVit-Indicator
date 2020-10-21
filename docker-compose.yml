@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
 
-    service-mongodb:
+    indicators-mongodb:
         image: mongo
-        container_name: service-mongodb
+        container_name: indicators-mongodb
         ports: 
           - '27017:27017'
         # restart: always
@@ -16,11 +16,11 @@ services:
             - './data:/data'
             - ./init-mongo.js :/docker-entrypoint-initdb.d/
 
-    name-service:
+    indicators-service:
         build: .
         ports: 
           - 8000:8000
-        container_name: name-service
+        container_name: indicators-service
         restart: always
         volumes: 
           - './app:/app'
