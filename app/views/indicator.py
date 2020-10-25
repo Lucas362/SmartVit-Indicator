@@ -7,5 +7,10 @@ CORS(app)
 
 
 @app.route("/indicators/<string:winery_id>", methods=["GET"])
-def pest(winery_id):
+def indicators(winery_id):
     return controller.retrieve_indicators_request(winery_id)
+
+
+@app.route("/indicators", methods=["POST"])
+def indicators_post():
+    return controller.calculate_indicators()

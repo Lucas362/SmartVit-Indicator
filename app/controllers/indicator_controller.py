@@ -1,8 +1,11 @@
 import numpy as np
+# import os
 import skfuzzy as fuzz
 # import matplotlib.pyplot as plt
-# from bson import ObjectId
-# from models.indicator import MongoDB
+from datetime import datetime
+from bson import ObjectId
+from bson.json_util import dumps
+from models.indicator import MongoDB
 
 
 # entradas
@@ -10,7 +13,7 @@ wind = np.arange(0, 101, 1)
 pluviometric = np.arange(0, 101, 1)
 temperature = np.arange(-16, 51, 1)
 humidity = np.arange(0, 101, 1)
-ph = np.arange(-16, 51, 1)
+ph = np.arange(0, 15, 1)
 # Qualidade
 quality = np.arange(0, 101, 1)
 
@@ -97,10 +100,10 @@ good_humidity = fuzz.trimf(humidity, [0, 2, 3])
 # ax3.get_xaxis().tick_bottom()
 # ax3.get_yaxis().tick_left()
 
-low_ph = fuzz.trimf(ph, [-15, -15, 10])
-high_ph = fuzz.trimf(ph, [27, 50, 50])
-acceptable_ph = fuzz.trapmf(ph, [8, 10, 16, 17])
-good_ph = fuzz.trapmf(ph, [16, 18, 25, 28])
+low_ph = fuzz.trimf(ph, [0, 0, 5])
+high_ph = fuzz.trimf(ph, [8, 15, 15])
+acceptable_ph = fuzz.trapmf(ph, [6, 7, 8, 9])
+good_ph = fuzz.trapmf(ph, [4, 5, 6, 7])
 
 # ax4.plot(ph, low_ph, 'b', linewidth=1.5, label='Bad')
 # ax4.plot(ph, high_ph, 'b', linewidth=1.5, label='Bad')
@@ -134,17 +137,46 @@ quality_H = fuzz.trapmf(quality, [65, 80, 100, 100])
 
 
 def retrieve_indicators_request(winery_id):
-    # db = MongoDB()
-    # connection_is_alive = db.test_connection()
-    # if connection_is_alive:
-    #     winery_id = ObjectId(winery_id)
+    db = MongoDB()
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        winery_id = ObjectId(winery_id)
+        indicator = db.get_indicators_by_winery_id(winery_id)
+        return dumps(indicator), 200
 
-    agFunc = aggMemberFunc(5, 2, 11, 2)
-    final = fuzz.defuzz(quality, agFunc, 'centroid')
-    return {"message": final}, 200
+    db.close_connection()
+    return {'error': 'Something gone wrong'}, 500
 
 
-def aggMemberFunc(windVal, pluviometricVal, temperatureVal, humidityVal):
+def calculate_indicators():
+    db = MongoDB()
+    connection_is_alive = db.test_connection()
+    if connection_is_alive:
+        wineries = db.get_all_wineries()
+        date = datetime.now().strftime('%m/%d/%Y, %H:%M:%S')
+        for winery in wineries:
+            indicator = dict()
+            indicator['winery_id'] = str(winery['_id'])
+            indicator['date'] = date
+            try:
+                agFunc = aggMemberFunc(5, 2, 19, 2, 5)
+                final = fuzz.defuzz(quality, agFunc, 'centroid')
+                indicator['value'] = final
+            except Exception as e:
+                print(e)
+                indicator['value'] = 0
+
+            db.insert_one(indicator)
+
+        return {"message": "Indicadores salvos"}, 200
+
+    db.close_connection()
+    return {'error': 'Something gone wrong'}, 500
+
+
+def aggMemberFunc(
+    windVal, pluviometricVal, temperatureVal, humidityVal, phVal
+):
     # Interpola as variáveis (adiciona as variáveis ao universo de dados)
     wind_lo = fuzz.interp_membership(wind, bad_wind, windVal)
     wind_md = fuzz.interp_membership(wind, acceptable_wind, windVal)
@@ -202,19 +234,37 @@ def aggMemberFunc(windVal, pluviometricVal, temperatureVal, humidityVal):
         humidityVal
     )
 
+    ph_bl = fuzz.interp_membership(ph, low_ph, phVal)
+    ph_hl = fuzz.interp_membership(ph, high_ph, phVal)
+    ph_md = fuzz.interp_membership(ph, acceptable_ph, phVal)
+    ph_hi = fuzz.interp_membership(ph, good_ph, phVal)
+
     # Determina os pesos para cada antecedência
     bad_temperature = np.fmax(temperature_bl, temperature_hl)
+    bad_ph = np.fmax(ph_bl, ph_hl)
     humidity_good = np.fmax(humidity_hi, humidity_md)
     temperature_good = np.fmax(temperature_hi, temperature_md)
     rule1 = np.fmax(
         wind_hi, np.fmax(
-            pluviometric_hi, np.fmax(temperature_good, humidity_good)))
+            pluviometric_hi, np.fmax(
+                ph_hi, np.fmax(temperature_good, humidity_good)
+            )
+        )
+    )
     rule2 = np.fmax(
         wind_md, np.fmax(
-            pluviometric_md, np.fmax(temperature_md, humidity_md)))
+            pluviometric_md, np.fmax(
+                ph_md, np.fmax(temperature_md, humidity_md)
+            )
+        )
+    )
     rule3 = np.fmax(
         wind_lo, np.fmax(
-            pluviometric_lo, np.fmax(humidity_lo, bad_temperature)))
+            pluviometric_lo, np.fmax(
+                humidity_lo, np.fmax(bad_ph, bad_temperature)
+            )
+        )
+    )
 
     # Determina os valores de cada relação de quality
     quality1 = rule1 * quality_H

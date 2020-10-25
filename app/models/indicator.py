@@ -23,9 +23,9 @@ class MongoDB():
     def close_connection(self):
         self.client.close()
 
-    def get_collection(self):
+    def get_collection(self, collection='indicators'):
         db = self.client['smart-dev']
-        collection = db['indicators']
+        collection = db[collection]
         return collection
 
     def insert_one(self, body):
@@ -42,7 +42,7 @@ class MongoDB():
             collection = self.get_collection()
 
             collection.update_one(
-                {"id": body["id"]},
+                {"_id": body["_id"]},
                 {"$set": body}
             )
 
@@ -52,7 +52,7 @@ class MongoDB():
     def delete_one(self, identifier):
         try:
             collection = self.get_collection()
-            res = collection.delete_one({"id": identifier})
+            res = collection.delete_one({"_id": identifier})
             if res.deleted_count == 1:
                 print(f'Praga removida com sucesso {identifier}'
                       'removida com sucesso')
@@ -64,5 +64,15 @@ class MongoDB():
 
     def get_one(self, identifier):
         collection = self.get_collection()
-        document = collection.find_one({"id": identifier})
+        document = collection.find_one({"_id": identifier})
+        return document
+
+    def get_indicators_by_winery_id(self, identifier):
+        collection = self.get_collection()
+        document = collection.find({"winery_id": identifier})
+        return document
+
+    def get_all_wineries(self):
+        collection = self.get_collection('winery')
+        document = collection.find()
         return document
