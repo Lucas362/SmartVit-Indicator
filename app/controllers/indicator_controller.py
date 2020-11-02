@@ -3,7 +3,6 @@ import numpy as np
 import skfuzzy as fuzz
 # import matplotlib.pyplot as plt
 from datetime import datetime
-from bson import ObjectId
 from bson.json_util import dumps
 from models.indicator import MongoDB
 
