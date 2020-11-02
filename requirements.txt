@@ -16,3 +16,5 @@ pytest==6.0.2
 scikit-fuzzy==0.4.2
 numpy==1.19.2
 flake8
+coverage
+gunicorn
