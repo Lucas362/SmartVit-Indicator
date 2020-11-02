@@ -140,7 +140,6 @@ def retrieve_indicators_request(winery_id):
     db = MongoDB()
     connection_is_alive = db.test_connection()
     if connection_is_alive:
-        winery_id = ObjectId(winery_id)
         indicator = db.get_indicators_by_winery_id(winery_id)
         return dumps(indicator), 200
 
