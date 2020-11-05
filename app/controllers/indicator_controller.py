@@ -3,7 +3,6 @@ import numpy as np
 import skfuzzy as fuzz
 # import matplotlib.pyplot as plt
 from datetime import datetime
-from bson import ObjectId
 from bson.json_util import dumps
 from models.indicator import MongoDB
 
@@ -140,7 +139,6 @@ def retrieve_indicators_request(winery_id):
     db = MongoDB()
     connection_is_alive = db.test_connection()
     if connection_is_alive:
-        winery_id = ObjectId(winery_id)
         indicator = db.get_indicators_by_winery_id(winery_id)
         return dumps(indicator), 200
 
