@@ -8,25 +8,30 @@ from models.indicator import MongoDB
 
 
 # entradas
-wind = np.arange(0, 101, 1)
-pluviometric = np.arange(0, 101, 1)
-temperature = np.arange(-16, 51, 1)
-humidity = np.arange(0, 101, 1)
 ph = np.arange(0, 15, 1)
-# Qualidade
+wind = np.arange(0, 28, 1)
+air_temp = np.arange(-16, 51, 1)
+rain = np.arange(0, 351, 1)
+soil_temp = np.arange(-16, 51, 1)
+soil_humidity = np.arange(0, 101, 1)
+air_humidity = np.arange(0, 101, 1)
+# Qualidade (saída)
 quality = np.arange(0, 101, 1)
 
+
+# fig, (ax5) = plt.subplots(nrows=1, figsize=(8, 9))
+
 # Funções de pertinência
-bad_wind = fuzz.trimf(wind, [16, 100, 100])
-acceptable_wind = fuzz.trapmf(wind, [10, 11, 13, 18])
-good_wind = fuzz.trimf(wind, [0, 5, 11])
+low_ph = fuzz.trimf(ph, [0, 0, 4])
+high_ph = fuzz.trimf(ph, [8, 15, 15])
+acceptable_ph = fuzz.trimf(ph, [4, 5, 6])
+good_ph = fuzz.trapmf(ph, [5, 6, 7, 9])
 
-# fig, (ax0, ax1, ax2, ax3, ax4, ax5) = plt.subplots(nrows=6, figsize=(8, 9))
-
-# ax0.plot(wind, bad_wind, 'b', linewidth=1.5, label='Bad')
-# ax0.plot(wind, acceptable_wind, 'g', linewidth=1.5, label='acceptable')
-# ax0.plot(wind, good_wind, 'r', linewidth=1.5, label='Good')
-# ax0.set_title('wind')
+# ax0.plot(ph, low_ph, 'b', linewidth=1.5, label='low')
+# ax0.plot(ph, high_ph, 'b', linewidth=1.5, label='high')
+# ax0.plot(ph, acceptable_ph, 'g', linewidth=1.5, label='acceptable')
+# ax0.plot(ph, good_ph, 'r', linewidth=1.5, label='Good')
+# ax0.set_title('ph')
 # ax0.legend()
 
 # ax0.spines['top'].set_visible(False)
@@ -34,20 +39,17 @@ good_wind = fuzz.trimf(wind, [0, 5, 11])
 # ax0.get_xaxis().tick_bottom()
 # ax0.get_yaxis().tick_left()
 
-bad_pluviometric = fuzz.trimf(pluviometric, [11, 100, 100])
-acceptable_pluviometric = fuzz.trapmf(pluviometric, [2, 3, 10, 14])
-good_pluviometric = fuzz.trimf(pluviometric, [0, 2, 3])
+# plt.savefig('name1.png')
+# os.system('eog name1.png &')
 
-# ax1.plot(pluviometric, bad_pluviometric, 'b', linewidth=1.5, label='Bad')
-# ax1.plot(
-#     pluviometric,
-#     acceptable_pluviometric,
-#     'g',
-#     linewidth=1.5,
-#     label='acceptable'
-# )
-# ax1.plot(pluviometric, good_pluviometric, 'r', linewidth=1.5, label='Good')
-# ax1.set_title('pluviometric')
+bad_wind = fuzz.trimf(wind, [5, 27, 27])
+acceptable_wind = fuzz.trapmf(wind, [2, 3, 4, 6])
+good_wind = fuzz.trapmf(wind, [0, 0, 2, 3])
+
+# ax1.plot(wind, bad_wind, 'b', linewidth=1.5, label='Bad')
+# ax1.plot(wind, acceptable_wind, 'g', linewidth=1.5, label='acceptable')
+# ax1.plot(wind, good_wind, 'r', linewidth=1.5, label='Good')
+# ax1.set_title('wind')
 # ax1.legend()
 
 # ax1.spines['top'].set_visible(False)
@@ -55,22 +57,19 @@ good_pluviometric = fuzz.trimf(pluviometric, [0, 2, 3])
 # ax1.get_xaxis().tick_bottom()
 # ax1.get_yaxis().tick_left()
 
-low_temperature = fuzz.trimf(temperature, [-15, -15, 10])
-high_temperature = fuzz.trimf(temperature, [27, 50, 50])
-acceptable_temperature = fuzz.trapmf(temperature, [8, 10, 16, 17])
-good_temperature = fuzz.trapmf(temperature, [16, 18, 25, 28])
+# plt.savefig('name2.png')
+# os.system('eog name2.png &')
 
-# ax2.plot(temperature, low_temperature, 'b', linewidth=1.5, label='Too Low')
-# ax2.plot(temperature, high_temperature, 'b', linewidth=1.5, label='Too High')
-# ax2.plot(
-#     temperature,
-#     acceptable_temperature,
-#     'g',
-#     linewidth=1.5,
-#     label='acceptable'
-# )
-# ax2.plot(temperature, good_temperature, 'r', linewidth=1.5, label='Good')
-# ax2.set_title('temperature')
+low_air_temp = fuzz.trimf(air_temp, [0, 14, 14])
+high_air_temp = fuzz.trimf(air_temp, [36, 50, 50])
+acceptable_air_temp = fuzz.trapmf(air_temp, [13, 15, 20, 22])
+good_air_temp = fuzz.trapmf(air_temp, [18, 21, 35, 37])
+
+# ax2.plot(air_temp, low_air_temp, 'b', linewidth=1.5, label='low')
+# ax2.plot(air_temp, high_air_temp, 'b', linewidth=1.5, label='high')
+# ax2.plot(air_temp, acceptable_air_temp, 'g', linewidth=1.5, label='acceptable') # noqa
+# ax2.plot(air_temp, good_air_temp, 'r', linewidth=1.5, label='Good')
+# ax2.set_title('air_temp')
 # ax2.legend()
 
 # ax2.spines['top'].set_visible(False)
@@ -78,20 +77,19 @@ good_temperature = fuzz.trapmf(temperature, [16, 18, 25, 28])
 # ax2.get_xaxis().tick_bottom()
 # ax2.get_yaxis().tick_left()
 
-bad_humidity = fuzz.trimf(humidity, [11, 100, 100])
-acceptable_humidity = fuzz.trapmf(humidity, [2, 4, 10, 12])
-good_humidity = fuzz.trimf(humidity, [0, 2, 3])
+# plt.savefig('name4.png')
+# os.system('eog name4.png &')
 
-# ax3.plot(humidity, bad_humidity, 'b', linewidth=1.5, label='Bad')
-# ax3.plot(
-#     humidity,
-#     acceptable_humidity,
-#     'g',
-#     linewidth=1.5,
-#     label='acceptable'
-# )
-# ax3.plot(humidity, good_humidity, 'r', linewidth=1.5, label='Good')
-# ax3.set_title('humidity')
+low_rain = fuzz.trimf(rain, [0, 50, 52])
+high_rain = fuzz.trimf(rain, [245, 350, 350])
+acceptable_rain = fuzz.trapmf(rain, [48, 60, 148, 152])
+good_rain = fuzz.trapmf(rain, [148, 160, 242, 252])
+
+# ax3.plot(rain, low_rain, 'b', linewidth=1.5, label='low')
+# ax3.plot(rain, high_rain, 'b', linewidth=1.5, label='high')
+# ax3.plot(rain, acceptable_rain, 'g', linewidth=1.5, label='acceptable')
+# ax3.plot(rain, good_rain, 'r', linewidth=1.5, label='Good')
+# ax3.set_title('rain')
 # ax3.legend()
 
 # ax3.spines['top'].set_visible(False)
@@ -99,16 +97,19 @@ good_humidity = fuzz.trimf(humidity, [0, 2, 3])
 # ax3.get_xaxis().tick_bottom()
 # ax3.get_yaxis().tick_left()
 
-low_ph = fuzz.trimf(ph, [0, 0, 5])
-high_ph = fuzz.trimf(ph, [8, 15, 15])
-acceptable_ph = fuzz.trapmf(ph, [6, 7, 8, 9])
-good_ph = fuzz.trapmf(ph, [4, 5, 6, 7])
+# plt.savefig('fuzzy2.png')
+# os.system('eog fuzzy2.png &')
 
-# ax4.plot(ph, low_ph, 'b', linewidth=1.5, label='Bad')
-# ax4.plot(ph, high_ph, 'b', linewidth=1.5, label='Bad')
-# ax4.plot(ph, acceptable_ph, 'g', linewidth=1.5, label='acceptable')
-# ax4.plot(ph, good_ph, 'r', linewidth=1.5, label='Good')
-# ax4.set_title('ph')
+low_soil_temp = fuzz.trimf(soil_temp, [0, 15, 15])
+high_soil_temp = fuzz.trimf(soil_temp, [32, 100, 100])
+acceptable_soil_temp = fuzz.trapmf(soil_temp, [12, 16, 20, 22])
+good_soil_temp = fuzz.trapmf(soil_temp, [21, 22, 35, 37])
+
+# ax4.plot(soil_temp, low_soil_temp, 'b', linewidth=1.5, label='low')
+# ax4.plot(soil_temp, high_soil_temp, 'b', linewidth=1.5, label='high')
+# ax4.plot(soil_temp, acceptable_soil_temp, 'g', linewidth=1.5, label='acceptable') # noqa
+# ax4.plot(soil_temp, good_soil_temp, 'r', linewidth=1.5, label='Good')
+# ax4.set_title('soil_temp')
 # ax4.legend()
 
 # ax4.spines['top'].set_visible(False)
@@ -116,14 +117,19 @@ good_ph = fuzz.trapmf(ph, [4, 5, 6, 7])
 # ax4.get_xaxis().tick_bottom()
 # ax4.get_yaxis().tick_left()
 
-quality_L = fuzz.trapmf(quality, [0, 0, 15, 35])
-quality_A = fuzz.trapmf(quality, [30, 40, 60, 70])
-quality_H = fuzz.trapmf(quality, [65, 80, 100, 100])
+# plt.savefig('name6.png')
+# os.system('eog name6.png &')
 
-# ax5.plot(quality, quality_L, 'b', linewidth=1.5, label='Bad')
-# ax5.plot(quality, quality_A, 'g', linewidth=1.5, label='acceptable')
-# ax5.plot(quality, quality_H, 'r', linewidth=1.5, label='Good')
-# ax5.set_title('quality')
+low_soil_humidity = fuzz.trimf(soil_humidity, [0, 30, 30])
+high_soil_humidity = fuzz.trimf(soil_humidity, [49, 100, 100])
+acceptable_soil_humidity = fuzz.trapmf(soil_humidity, [29, 31, 39, 40])
+good_soil_humidity = fuzz.trapmf(soil_humidity, [39, 41, 50, 50])
+
+# ax5.plot(soil_humidity, low_soil_humidity, 'b', linewidth=1.5, label='low')
+# ax5.plot(soil_humidity, high_soil_humidity, 'b', linewidth=1.5, label='high')
+# ax5.plot(soil_humidity, acceptable_soil_humidity, 'g', linewidth=1.5, label='acceptable') # noqa
+# ax5.plot(soil_humidity, good_soil_humidity, 'r', linewidth=1.5, label='Good')
+# ax5.set_title('soil_humidity')
 # ax5.legend()
 
 # ax5.spines['top'].set_visible(False)
@@ -131,8 +137,46 @@ quality_H = fuzz.trapmf(quality, [65, 80, 100, 100])
 # ax5.get_xaxis().tick_bottom()
 # ax5.get_yaxis().tick_left()
 
-# plt.savefig('name4.png')
-# os.system('eog name4.png &')
+# plt.savefig('fuzzy3.png')
+# os.system('eog fuzzy3.png &')
+
+low_air_humidity = fuzz.trimf(air_humidity, [0, 10, 10])
+high_air_humidity = fuzz.trimf(air_humidity, [68, 100, 100])
+acceptable_air_humidity = fuzz.trapmf(air_humidity, [8, 12, 15, 17])
+good_air_humidity = fuzz.trapmf(air_humidity, [16, 19, 70, 72])
+
+# ax6.plot(air_humidity, low_air_humidity, 'b', linewidth=1.5, label='low')
+# ax6.plot(air_humidity, high_air_humidity, 'b', linewidth=1.5, label='high')
+# ax6.plot(air_humidity, acceptable_air_humidity, 'g', linewidth=1.5, label='acceptable') # noqa
+# ax6.plot(air_humidity, good_air_humidity, 'r', linewidth=1.5, label='Good')
+# ax6.set_title('air_humidity')
+# ax6.legend()
+
+# ax6.spines['top'].set_visible(False)
+# ax6.spines['right'].set_visible(False)
+# ax6.get_xaxis().tick_bottom()
+# ax6.get_yaxis().tick_left()
+
+# plt.savefig('name8.png')
+# os.system('eog name8.png &')
+
+quality_L = fuzz.trapmf(quality, [0, 0, 15, 35])
+quality_A = fuzz.trapmf(quality, [30, 40, 60, 70])
+quality_H = fuzz.trapmf(quality, [65, 80, 100, 100])
+
+# ax7.plot(quality, quality_L, 'b', linewidth=1.5, label='Bad')
+# ax7.plot(quality, quality_A, 'g', linewidth=1.5, label='acceptable')
+# ax7.plot(quality, quality_H, 'r', linewidth=1.5, label='Good')
+# ax7.set_title('quality')
+# ax7.legend()
+
+# ax7.spines['top'].set_visible(False)
+# ax7.spines['right'].set_visible(False)
+# ax7.get_xaxis().tick_bottom()
+# ax7.get_yaxis().tick_left()
+
+# plt.savefig('fuzzy4.png')
+# os.system('eog fuzzy4.png &')
 
 
 def retrieve_indicators_request(winery_id):
@@ -157,7 +201,7 @@ def calculate_indicators():
             indicator['winery_id'] = str(winery['_id'])
             indicator['date'] = date
             try:
-                agFunc = aggMemberFunc(5, 2, 19, 2, 5)
+                agFunc = aggMemberFunc(6, 0, 30, 200, 30, 450, 50)
                 final = fuzz.defuzz(quality, agFunc, 'centroid')
                 indicator['value'] = final
             except Exception as e:
@@ -173,93 +217,147 @@ def calculate_indicators():
 
 
 def aggMemberFunc(
-    windVal, pluviometricVal, temperatureVal, humidityVal, phVal
+    phVal,
+    windVal,
+    airTemVal,
+    rainVal,
+    soilTempVal,
+    soilHumidityVal,
+    airHumidityVal
 ):
     # Interpola as variáveis (adiciona as variáveis ao universo de dados)
-    wind_lo = fuzz.interp_membership(wind, bad_wind, windVal)
-    wind_md = fuzz.interp_membership(wind, acceptable_wind, windVal)
-    wind_hi = fuzz.interp_membership(wind, good_wind, windVal)
-
-    pluviometric_lo = fuzz.interp_membership(
-        pluviometric,
-        bad_pluviometric,
-        pluviometricVal
-    )
-    pluviometric_md = fuzz.interp_membership(
-        pluviometric,
-        acceptable_pluviometric,
-        pluviometricVal
-    )
-    pluviometric_hi = fuzz.interp_membership(
-        pluviometric,
-        good_pluviometric,
-        pluviometricVal)
-
-    temperature_bl = fuzz.interp_membership(
-        temperature,
-        low_temperature,
-        temperatureVal
-    )
-    temperature_hl = fuzz.interp_membership(
-        temperature,
-        high_temperature,
-        temperatureVal
-    )
-    temperature_md = fuzz.interp_membership(
-        temperature,
-        acceptable_temperature,
-        temperatureVal
-    )
-    temperature_hi = fuzz.interp_membership(
-        temperature,
-        good_temperature,
-        temperatureVal
-    )
-
-    humidity_lo = fuzz.interp_membership(
-        humidity,
-        bad_humidity,
-        humidityVal
-    )
-    humidity_md = fuzz.interp_membership(
-        humidity,
-        acceptable_humidity,
-        humidityVal
-    )
-    humidity_hi = fuzz.interp_membership(
-        humidity,
-        good_humidity,
-        humidityVal
-    )
-
     ph_bl = fuzz.interp_membership(ph, low_ph, phVal)
     ph_hl = fuzz.interp_membership(ph, high_ph, phVal)
     ph_md = fuzz.interp_membership(ph, acceptable_ph, phVal)
     ph_hi = fuzz.interp_membership(ph, good_ph, phVal)
 
+    wind_lo = fuzz.interp_membership(wind, bad_wind, windVal)
+    wind_md = fuzz.interp_membership(wind, acceptable_wind, windVal)
+    wind_hi = fuzz.interp_membership(wind, good_wind, windVal)
+
+    air_temp_bl = fuzz.interp_membership(air_temp, low_air_temp, airTemVal)
+    air_temp_hl = fuzz.interp_membership(air_temp, high_air_temp, airTemVal)
+    air_temp_md = fuzz.interp_membership(
+        air_temp,
+        acceptable_air_temp,
+        airTemVal
+    )
+    air_temp_hi = fuzz.interp_membership(air_temp, good_air_temp, airTemVal)
+
+    rain_bl = fuzz.interp_membership(rain, low_rain, rainVal)
+    rain_hl = fuzz.interp_membership(rain, high_rain, rainVal)
+    rain_md = fuzz.interp_membership(rain, acceptable_rain, rainVal)
+    rain_hi = fuzz.interp_membership(rain, good_rain, rainVal)
+
+    soil_temp_bl = fuzz.interp_membership(
+        soil_temp,
+        low_soil_temp,
+        soilTempVal
+    )
+    soil_temp_hl = fuzz.interp_membership(
+        soil_temp,
+        high_soil_temp,
+        soilTempVal
+    )
+    soil_temp_md = fuzz.interp_membership(
+        soil_temp,
+        acceptable_soil_temp,
+        soilTempVal
+    )
+    soil_temp_hi = fuzz.interp_membership(
+        soil_temp,
+        good_soil_temp,
+        soilTempVal
+    )
+
+    soil_humidity_bl = fuzz.interp_membership(
+        soil_humidity,
+        low_soil_humidity,
+        soilHumidityVal
+    )
+    soil_humidity_hl = fuzz.interp_membership(
+        soil_humidity,
+        high_soil_humidity,
+        soilHumidityVal
+    )
+    soil_humidity_md = fuzz.interp_membership(
+        soil_humidity,
+        acceptable_soil_humidity,
+        soilHumidityVal
+    )
+    soil_humidity_hi = fuzz.interp_membership(
+        soil_humidity,
+        good_soil_humidity,
+        soilHumidityVal
+    )
+
+    air_humidity_bl = fuzz.interp_membership(
+        air_humidity,
+        low_air_humidity,
+        airHumidityVal
+    )
+    air_humidity_hl = fuzz.interp_membership(
+        air_humidity,
+        high_air_humidity,
+        airHumidityVal
+    )
+    air_humidity_md = fuzz.interp_membership(
+        air_humidity,
+        acceptable_air_humidity,
+        airHumidityVal
+    )
+    air_humidity_hi = fuzz.interp_membership(
+        air_humidity,
+        good_air_humidity,
+        airHumidityVal
+    )
+
     # Determina os pesos para cada antecedência
-    bad_temperature = np.fmax(temperature_bl, temperature_hl)
     bad_ph = np.fmax(ph_bl, ph_hl)
-    humidity_good = np.fmax(humidity_hi, humidity_md)
-    temperature_good = np.fmax(temperature_hi, temperature_md)
+    bad_air_temp = np.fmax(air_temp_bl, air_temp_hl)
+    bad_rain = np.fmax(rain_bl, rain_hl)
+    bad_soil_temp = np.fmax(soil_temp_bl, soil_temp_hl)
+    bad_soil_humidity = np.fmax(soil_humidity_bl, soil_humidity_hl)
+    bad_air_humidity = np.fmax(air_humidity_bl, air_humidity_hl)
+
     rule1 = np.fmax(
-        wind_hi, np.fmax(
-            pluviometric_hi, np.fmax(
-                ph_hi, np.fmax(temperature_good, humidity_good)
+        ph_hi, np.fmax(
+            wind_hi, np.fmax(
+                air_temp_hi, np.fmax(
+                    rain_hi, np.fmax(
+                        soil_temp_hi, np.fmax(
+                            soil_humidity_hi, air_humidity_hi
+                        )
+                    )
+                )
             )
         )
     )
+
     rule2 = np.fmax(
-        wind_md, np.fmax(
-            pluviometric_md, np.fmax(
-                ph_md, np.fmax(temperature_md, humidity_md)
+        ph_md, np.fmax(
+            wind_md, np.fmax(
+                air_temp_md, np.fmax(
+                    rain_md, np.fmax(
+                        soil_temp_md, np.fmax(
+                            soil_humidity_md, air_humidity_md
+                        )
+                    )
+                )
             )
         )
     )
+
     rule3 = np.fmax(
-        wind_lo, np.fmax(
-            pluviometric_lo, np.fmax(
-                humidity_lo, np.fmax(bad_ph, bad_temperature)
+        bad_ph, np.fmax(
+            wind_lo, np.fmax(
+                bad_air_temp, np.fmax(
+                    bad_rain, np.fmax(
+                        bad_soil_temp, np.fmax(
+                            bad_soil_humidity, bad_air_humidity
+                        )
+                    )
+                )
             )
         )
     )
