@@ -9,7 +9,7 @@ api_url = None
 @given('que o sistema deseja captar dados dos sensores')
 def step_impl_given(context):
     global api_url
-    api_url = 'que o sistema deseja captar dados dos sensores'
+    api_url = 'https://smartvit-indicator-dev.herokuapp.com/indicators'
     print('url :'+api_url)
 
 
@@ -21,10 +21,9 @@ def step_impl_when(context):
                               "humidity": "25",
                               "temperature": "31"}
     response = requests.post(
-                            'https://smartvit-indicator-dev.herokuapp.com/indicators',
+                            api_url,
                             json=request_bodies['POST']
                             )
-    #assert response.status_code == 200
     statuscode = response.status_code
     response_codes['POST'] = statuscode
 
