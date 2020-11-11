@@ -18,3 +18,4 @@ numpy==1.19.2
 flake8
 coverage
 gunicorn
+behave==1.2.6
