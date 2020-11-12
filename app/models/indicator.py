@@ -69,12 +69,12 @@ class MongoDB():
         except Exception as err:
             print(f'Erro ao deletar no banco de dados: {err}')
 
-    def get_one(self, identifier):
-        collection = self.get_collection()
+    def get_one(self, identifier, collection='indicators'):
+        collection = self.get_collection(collection)
         document = collection.find_one({"_id": identifier})
         return document
 
-    def get_indicators_by_winery_id(self, identifier):
+    def get_fuzzy_by_winery_id(self, identifier):
         collection = self.get_collection()
         document = collection.find({"winery_id": identifier})
         return document
@@ -82,4 +82,9 @@ class MongoDB():
     def get_all_wineries(self):
         collection = self.get_collection('winery')
         document = collection.find()
+        return document
+
+    def get_measurement_from_sensor(self, sensor_id):
+        collection = self.get_collection('measurement')
+        document = collection.find({"sensor_id": sensor_id})
         return document

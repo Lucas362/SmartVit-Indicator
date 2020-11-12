@@ -3,8 +3,11 @@ import numpy as np
 import skfuzzy as fuzz
 # import matplotlib.pyplot as plt
 from datetime import datetime
-from bson.json_util import dumps
+from bson import ObjectId
+from bson.json_util import dumps, loads
 from models.indicator import MongoDB
+import itertools
+import json
 
 
 # entradas
@@ -183,8 +186,82 @@ def retrieve_indicators_request(winery_id):
     db = MongoDB()
     connection_is_alive = db.test_connection()
     if connection_is_alive:
-        indicator = db.get_indicators_by_winery_id(winery_id)
-        return dumps(indicator), 200
+        winery_obj_id = ObjectId(winery_id)
+        winery = db.get_one(winery_obj_id, 'winery')
+        if winery:
+            indicator = db.get_fuzzy_by_winery_id(winery_id)
+            fuzzy = indicator
+            fuzzy = [item['value'] for item in fuzzy]
+            systems = []
+            general_indicators = dict()
+            general_indicators["sensor_ph"] = 0
+            general_indicators["temp_celsius"] = 0
+            general_indicators["vento_MS"] = 0
+            general_indicators["humidity_percent"] = 0
+            general_count = 0
+
+            for system in winery['systems']:
+                sys_gen = dict()
+                sys_gen["sensor_ph"] = 0
+                sys_gen["temp_celsius"] = 0
+                sys_gen["vento_MS"] = 0
+                sys_gen["humidity_percent"] = 0
+                
+                system_ind = dict()
+                system_ind["vento_MS"] = []
+                system_ind["vento_direcao"] = []
+                system_ind["qtd_chuva"] = []
+                system_ind["temp_celsius"] = []
+                system_ind["humidity_percent"] = []
+                system_ind["pressure_hPa"] = []
+                system_ind["sensor_ph"] = []
+                system_ind["moist_percent_1"] = []
+                system_ind["moist_percent_2"] = []
+                system_ind["moist_percent_3"] = []
+                for sensor in system['sensors']:
+                    measurements = db.get_measurement_from_sensor(
+                                sensor['identifier']
+                            )
+
+                    for measurement in measurements:
+                        system_ind[measurement['type']].append(
+                            measurement['value']
+                        )
+                is_valid = False
+                gen_keys = sys_gen.keys()
+                for indicator in system_ind.keys():
+                    if system_ind[indicator]:
+                        is_valid = True
+                        sys_gen_indicator = list(
+                            itertools.islice(
+                                system_ind[indicator], 10
+                            )
+                        )
+                        system_ind[indicator] = sys_gen_indicator
+                        if indicator in gen_keys:
+                            sys_gen[indicator] = sum(sys_gen_indicator)/len(sys_gen_indicator)
+                
+                if is_valid:
+                    general_count += 1
+                    general_indicators["sensor_ph"] += sys_gen["sensor_ph"]
+                    general_indicators["temp_celsius"] += sys_gen["temp_celsius"]
+                    general_indicators["vento_MS"] += sys_gen["vento_MS"]
+                    general_indicators["humidity_percent"] += sys_gen["humidity_percent"]
+
+                system_ind["sys_gen"] = sys_gen
+                systems.append(system_ind)
+
+                if general_count > 0:
+                    general_indicators["sensor_ph"] /= general_count 
+                    general_indicators["temp_celsius"] /= general_count 
+                    general_indicators["vento_MS"] /= general_count 
+                    general_indicators["humidity_percent"] /= general_count 
+
+                return {
+                    "fuzzy": fuzzy,
+                    "systems": systems,
+                    "general_indicators": general_indicators
+                }, 200
 
     db.close_connection()
     return {'error': 'Something gone wrong'}, 500
@@ -200,14 +277,39 @@ def calculate_indicators():
             indicator = dict()
             indicator['winery_id'] = str(winery['_id'])
             indicator['date'] = date
-            try:
-                agFunc = aggMemberFunc(6, 0, 30, 200, 30, 450, 50)
-                final = fuzz.defuzz(quality, agFunc, 'centroid')
-                indicator['value'] = final
-            except Exception as e:
-                print(e)
-                indicator['value'] = 0
 
+        #     final = 0
+        #     count = 0
+        #     for system in winery['systems']:
+        #         phVal = 0
+        #         windVal = 0
+        #         airTemVal = 0
+        #         rainVal = 0
+        #         soilTempVal = 0
+        #         soilHumidityVal = 0
+        #         airHumidityVal = 0
+        #         for sensor in system['sensors']:
+        #             try:
+        #                 agFunc = aggMemberFunc(
+        #                     phVal,
+        #                     windVal,
+        #                     airTemVal,
+        #                     rainVal,
+        #                     soilTempVal,
+        #                     soilHumidityVal,
+        #                     airHumidityVal
+        #                 )
+        #                 final += fuzz.defuzz(quality, agFunc, 'centroid')
+        #             except Exception as e:
+        #                 print(e)
+                
+        #         count += 1
+
+        #     if count > 1:
+        #         final /= count
+
+            # indicator['value'] = final
+            indicator['value'] = 20
             db.insert_one(indicator)
 
         return {"message": "Indicadores salvos"}, 200
