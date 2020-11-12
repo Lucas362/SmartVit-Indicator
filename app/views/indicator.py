@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_cors import CORS
 import controllers.indicator_controller as controller
 
-app = Blueprint('indicator', __name__)
+app = Blueprint('indicators', __name__)
 CORS(app)
 
 

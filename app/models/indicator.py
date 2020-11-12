@@ -88,3 +88,8 @@ class MongoDB():
         collection = self.get_collection('measurement')
         document = collection.find({"sensor_id": sensor_id})
         return document
+
+    def get_contract_by_winery(self, winery_id):
+        collection = self.get_collection('contracts')
+        document = collection.find({"winery._id": winery_id})
+        return document
