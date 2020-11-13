@@ -9,7 +9,7 @@ api_url = None
 @given('que o sistema deseja captar dados dos sensores')
 def step_impl_given(context):
     global api_url
-    api_url = 'https://smartvit-indicator-dev.herokuapp.com/indicators'
+    api_url = 'https://smartvit-indicator-stg.herokuapp.com/indicators'
     print('url :'+api_url)
 
 
