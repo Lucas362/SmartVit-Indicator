@@ -13,12 +13,12 @@ def step_impl_given(context):
     global user_id
     user_id = '5fac6984fb4a09e30d599bf7'
     api_url = 'http://smartvit-indicator-stg.herokuapp.com/indicators'
-    print(api_url + '/' +user_id)
+    print(api_url + '/' + user_id)
 
 
 @when('a pagina de visualizar indicadores')
 def step_impl_when(context):
-    response = requests.get(api_url + '/' +user_id)
+    response = requests.get(api_url + '/' + user_id)
     statuscode = response.status_code
     response_codes['GET'] = statuscode
 
