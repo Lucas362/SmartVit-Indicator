@@ -7,4 +7,4 @@ Feature: aptar requisicao feita no frontend e enviar dados dos  indicadores ao m
     Scenario: Usuario visualiza os indicadores cadastrados na aplicacao
         Given a pagina de visualizar indicadores
         When a pagina de visualizar indicadores
-        Then o bff requisita o microsservico indicator
+        Then os dados captados devem ser persistidos no banco de dados da aplicacao

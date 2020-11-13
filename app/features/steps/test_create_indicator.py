@@ -4,13 +4,17 @@ import requests
 request_bodies = {}
 response_codes = {}
 api_url = None
+bff_url = None
+user = None
 
 
 @given('que o sistema deseja captar dados dos sensores')
 def step_impl_given(context):
     global api_url
+    global user
+    user = '5fac6984fb4a09e30d599bf7'
     api_url = 'https://smartvit-indicator-stg.herokuapp.com/indicators'
-    print('url :'+api_url)
+    print('url :'+api_url + '/'+user)
 
 
 @when('captar dados dos sensores')
@@ -24,11 +28,12 @@ def step_impl_when(context):
                             api_url,
                             json=request_bodies['POST']
                             )
-    statuscode = response.status_code
-    response_codes['POST'] = statuscode
+    assert response.status_code == 200
 
 
-@then('os dados captados devem ser persistidos no banco de dados da aplicacao')
+@then('o bff requisita o microsservico indicator')
 def step_impl_then(context):
-    print('Post rep code ;'+str(response_codes['POST']))
-    assert response_codes['POST'] == 200
+    global bff_url
+    bff_url = 'https://smartvit-user-bff-stg.herokuapp.com/indicators'
+    response = requests.get(bff_url + '/'+user)
+    assert response.status_code == 200

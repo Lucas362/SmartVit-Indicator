@@ -12,6 +12,6 @@ Feature: Captar dados do modulo eletronico
        When captar dados dos sensores
        | sensor      | pH  | vento | umidade | temperatura |
        | 78as7as78as | 3.5 | 10    |  25     | 31          |
-       Then os dados captados devem ser persistidos no banco de dados da aplicacao
+       Then o bff requisita o microsservico indicator
        | sensor      | pH  | vento | umidade | temperatura |
        | 78as7as78as | 3.5 | 10    |  25     | 31          |
