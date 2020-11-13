@@ -35,5 +35,5 @@ def step_impl_when(context):
 def step_impl_then(context):
     global bff_url
     bff_url = 'https://smartvit-user-bff-stg.herokuapp.com/indicators'
-    response = requests.get(bff_url + '/'+user)
+    response = requests.get(bff_url + '/' + user)
     assert response.status_code == 200
