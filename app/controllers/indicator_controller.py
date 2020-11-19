@@ -203,43 +203,43 @@ def calculate_indicators():
                                 ph = system_ind["sensor_ph"]
                                 phVal = (
                                     sum(ph[:max(10, len(ph))]) /
-                                    min(count(ph), 10)
+                                    min(len(ph), 10)
                                 )
                             if windVal:
                                 wind = system_ind["vento_MS"]
                                 windVal = (
                                     sum(wind[:max(10, len(wind))]) /
-                                    min(count(wind), 10)
+                                    min(len(wind), 10)
                                 )
                             if airTemVal:
                                 air = system_ind["temp_celsius"]
                                 airTemVal = (
                                     sum(air[:max(10, len(air))]) /
-                                    min(count(air), 10)
+                                    min(len(air), 10)
                                 )
                             if rainVal:
                                 rain = system_ind["qtd_chuva"]
                                 rainVal = (
                                     sum(rain[:max(10, len(rain))]) /
-                                    min(count(rain), 10)
+                                    min(len(rain), 10)
                                 )
                             if soilTempVal:
                                 soilTemp = system_ind["temp_celsius"]
                                 soilTempVal = (
                                     sum(soilTemp[:max(10, len(soilTemp))]) /
-                                    min(count(soilTemp), 10)
+                                    min(len(soilTemp), 10)
                                 )
                             if soilHumidityVal:
                                 soilHum = system_ind["moist_percent_2"]
                                 soilHumidityVal = (
                                     sum(soilHum[:max(10, len(soilHum))]) /
-                                    min(count(soilHum), 10)
+                                    min(len(soilHum), 10)
                                 )
                             if airHumidityVal:
                                 airHum = system_ind["humidity_percent"]
                                 airHumidityVal = (
                                     sum(airHum[:max(10, len(airHum))]) /
-                                    min(count(airHum), 10)
+                                    min(len(airHum), 10)
                                 )
                     try:
                         agFunc = aggMemberFunc(
